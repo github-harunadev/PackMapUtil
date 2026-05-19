@@ -8,7 +8,7 @@ Example:
 - or any custom maps using custom channel input/outputs
 
 ## How to install
-- Download (latest release)[https://github.com/github-harunadev/PackMapUtil/releases/latest] from Releases
+- Download [latest release](https://github.com/github-harunadev/PackMapUtil/releases/latest) from Releases
 - Import to your project
 
 ## How to use
