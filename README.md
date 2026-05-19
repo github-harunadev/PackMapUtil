@@ -2,6 +2,8 @@
 
 A lazy util made for myself. Simple utility that can help convert existing PackMaps to various formats.
 
+<img src="https://raw.githubusercontent.com/github-harunadev/PackMapUtil/refs/heads/main/screenshot.png" width=360>
+
 Example:
 - MetallicSmoothness(RA) --> OcclusionRoughnessMetallic(RGB)
 - SpecularSmoothness(RGBA) --> MetallicSmoothness(RA)
