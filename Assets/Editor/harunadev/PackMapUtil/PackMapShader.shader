@@ -15,6 +15,7 @@ Shader "harunadev/PackMapShader"
         _SourceOcclusionChannel ("Source Occlusion Channel", Range(0, 4)) = 0
         _SourceIsRoughness ("Source Is Roughness", Float) = 0
         _SourceIsSpecular ("Source Is Specular", Float) = 0
+        _TargetBaseColor ("Target Base Color", Color) = (1,1,1,1)
         _TargetMetallicChannel ("Target Metallic Channel", Range(0, 3)) = 0
         _TargetSmoothnessChannel ("Target Smoothness Channel", Range(0, 3)) = 0
         _TargetOcclusionChannel ("Target Occlusion Channel", Range(0, 3)) = 0
@@ -71,6 +72,7 @@ Shader "harunadev/PackMapShader"
             int _SourceOcclusionChannel;
             float _SourceIsRoughness;
             float _SourceIsSpecular;
+            fixed4 _TargetBaseColor;
             int _TargetMetallicChannel;
             int _TargetSmoothnessChannel;
             int _TargetOcclusionChannel;
@@ -174,29 +176,30 @@ Shader "harunadev/PackMapShader"
                     smoothness = 1.0 - smoothness;
                 }
 
+                fixed4 output = fixed4(1, 1, 1, 1);
                 switch (_TargetMetallicChannel)
                 {
-                    case 0: col.r = metallic; break;
-                    case 1: col.g = metallic; break;
-                    case 2: col.b = metallic; break;
-                    case 3: col.a = metallic; break;
+                    case 0: output.r = metallic; break;
+                    case 1: output.g = metallic; break;
+                    case 2: output.b = metallic; break;
+                    case 3: output.a = metallic; break;
                 }
                 switch (_TargetSmoothnessChannel)
                 {
-                    case 0: col.r = smoothness; break;
-                    case 1: col.g = smoothness; break;
-                    case 2: col.b = smoothness; break;
-                    case 3: col.a = smoothness; break;
+                    case 0: output.r = smoothness; break;
+                    case 1: output.g = smoothness; break;
+                    case 2: output.b = smoothness; break;
+                    case 3: output.a = smoothness; break;
                 }
                 switch (_TargetOcclusionChannel)
                 {
-                    case 0: col.r = occlusion; break;
-                    case 1: col.g = occlusion; break;
-                    case 2: col.b = occlusion; break;
-                    case 3: col.a = occlusion; break;
+                    case 0: output.r = occlusion; break;
+                    case 1: output.g = occlusion; break;
+                    case 2: output.b = occlusion; break;
+                    case 3: output.a = occlusion; break;
                 }
 
-                return col;
+                return output;
             }
             ENDCG
         }

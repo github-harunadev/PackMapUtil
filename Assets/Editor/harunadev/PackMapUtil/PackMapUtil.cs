@@ -34,7 +34,7 @@ public enum ChannelNoExternal
 
 public class PackMapUtil : EditorWindow
 {
-    public const string version = "1.0";
+    public const string version = "1.1";
 
     [MenuItem("harunadev/PackMap Util")]
     public static void ShowWindow()
@@ -86,6 +86,7 @@ public class PackMapUtil : EditorWindow
     public bool sourceIsRoughness = false;
     public bool sourceIsSpecular = false;
 
+    public Color targetBaseColor = Color.white;
     public ChannelNoExternal targetMetallicChannel = ChannelNoExternal.B;
     public ChannelNoExternal targetSmoothnessChannel = ChannelNoExternal.G;
     public ChannelNoExternal targetOcclusionChannel = ChannelNoExternal.R;
@@ -199,6 +200,11 @@ public class PackMapUtil : EditorWindow
 
     private void OnGUI()
     {
+        if (_sourceTextures == null)
+        {
+            Initialize();
+        }
+
         preserveLabelWidth = EditorGUIUtility.labelWidth;
         EditorGUIUtility.labelWidth = 250;
 
@@ -291,6 +297,7 @@ public class PackMapUtil : EditorWindow
 
         EditorGUILayout.Space(EditorGUIUtility.singleLineHeight);
 
+        targetBaseColor = EditorGUILayout.ColorField("Target Base Pixel Color", targetBaseColor);
         targetMetallicChannel = (ChannelNoExternal)EditorGUILayout.EnumPopup("Target Metallic Channel", targetMetallicChannel);
         targetSmoothnessChannel = (ChannelNoExternal)EditorGUILayout.EnumPopup("Target Smoothness Channel", targetSmoothnessChannel);
         targetOcclusionChannel = (ChannelNoExternal)EditorGUILayout.EnumPopup("Target Occlusion Channel", targetOcclusionChannel);
@@ -329,10 +336,11 @@ public class PackMapUtil : EditorWindow
                             externalSmoothnessTexture, externalSmoothnessChannel, externalSmoothnessIsRoughness,
                             externalOcclusionTexture, externalOcclusionChannel,
                             sourceMetallicChannel, sourceSmoothnessChannel, sourceOcclusionChannel, sourceIsRoughness, sourceIsSpecular,
-                            targetMetallicChannel, targetSmoothnessChannel, targetOcclusionChannel, targetIsRoughness,
+                            targetBaseColor, targetMetallicChannel, targetSmoothnessChannel, targetOcclusionChannel, targetIsRoughness,
                             tmp
                         );
 
+                        ResetMaterial();
                         EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(tmp, typeof(Texture2D)));
                         AssetDatabase.Refresh();
                     }
@@ -377,11 +385,12 @@ public class PackMapUtil : EditorWindow
                                 null, externalSmoothnessChannel, false,
                                 null, externalOcclusionChannel,
                                 sourceMetallicChannel, sourceSmoothnessChannel, sourceOcclusionChannel, sourceIsRoughness, sourceIsSpecular,
-                                targetMetallicChannel, targetSmoothnessChannel, targetOcclusionChannel, targetIsRoughness,
+                                targetBaseColor, targetMetallicChannel, targetSmoothnessChannel, targetOcclusionChannel, targetIsRoughness,
                                 Path.Combine(Application.dataPath, tmp.Substring(0, tmp.LastIndexOf('/')), newName)
                             );
                         }
 
+                        ResetMaterial();
                         AssetDatabase.Refresh();
                     }
                     
@@ -415,7 +424,7 @@ public class PackMapUtil : EditorWindow
         Texture2D externalSmoothness, ChannelAdditional externalSmoothnessChannel, bool externalSmoothnessIsRoughness,
         Texture2D externalOcclusion, ChannelAdditional externalOcclusionChannel,
         Channel sourceMetallicChannel, Channel sourceSmoothnessChannel, Channel sourceOcclusionChannel, bool sourceIsRoughness, bool sourceIsSpecular,
-        ChannelNoExternal targetMetallicChannel, ChannelNoExternal targetSmoothnessChannel, ChannelNoExternal targetOcclusionChannel, bool targetIsRoughness,
+        Color targetBaseColor, ChannelNoExternal targetMetallicChannel, ChannelNoExternal targetSmoothnessChannel, ChannelNoExternal targetOcclusionChannel, bool targetIsRoughness,
         string savePath
         )
     {
@@ -438,6 +447,7 @@ public class PackMapUtil : EditorWindow
         PackMapMaterial.SetFloat("_SourceIsSpecular", sourceIsSpecular ? 1f : 0f);
         PackMapMaterial.SetInt("_SourceOcclusionChannel", (int)sourceOcclusionChannel);
 
+        PackMapMaterial.SetColor("_TargetBaseColor", targetBaseColor);
         PackMapMaterial.SetInt("_TargetMetallicChannel", (int)targetMetallicChannel);
         PackMapMaterial.SetInt("_TargetSmoothnessChannel", (int)targetSmoothnessChannel);
         PackMapMaterial.SetInt("_TargetOcclusionChannel", (int)targetOcclusionChannel);
@@ -456,6 +466,30 @@ public class PackMapUtil : EditorWindow
 
         renderTexture.Release();
         RenderTexture.active = prevactive;
+    }
+
+    public void ResetMaterial()
+    {
+        PackMapMaterial.SetTexture("_MainTex", null);
+        PackMapMaterial.SetTexture("_ExternalMetallicMap", null);
+        PackMapMaterial.SetInt("_ExternalMetallicChannel", 0);
+        PackMapMaterial.SetTexture("_ExternalSmoothnessMap", null);
+        PackMapMaterial.SetInt("_ExternalSmoothnessChannel", 0);
+        PackMapMaterial.SetFloat("_ExternalSmoothnessIsRoughness", 0f);
+        PackMapMaterial.SetTexture("_ExternalOcclusionMap", null);
+        PackMapMaterial.SetInt("_ExternalOcclusionChannel", 0);
+
+        PackMapMaterial.SetInt("_SourceMetallicChannel", 0);
+        PackMapMaterial.SetInt("_SourceSmoothnessChannel", 0);
+        PackMapMaterial.SetFloat("_SourceIsRoughness", 0f);
+        PackMapMaterial.SetFloat("_SourceIsSpecular", 0f);
+        PackMapMaterial.SetInt("_SourceOcclusionChannel", 0);
+
+        PackMapMaterial.SetColor("_TargetBaseColor", Color.white);
+        PackMapMaterial.SetInt("_TargetMetallicChannel", 0);
+        PackMapMaterial.SetInt("_TargetSmoothnessChannel", 0);
+        PackMapMaterial.SetInt("_TargetOcclusionChannel", 0);
+        PackMapMaterial.SetFloat("_TargetIsRoughness", 0f);
     }
 }
 #endif
