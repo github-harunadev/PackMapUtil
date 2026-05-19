@@ -9,6 +9,12 @@ Example:
 - SpecularSmoothness(RGBA) --> MetallicSmoothness(RA)
 - or any custom maps using custom channel input/outputs
 
+## Requirements
+- Unity 2022.3.22f1 or later
+  - __Untested on later versions.__
+- Windows
+  - Recommended, since I did not tested on the other environments
+
 ## How to install
 - Download [latest release](https://github.com/github-harunadev/PackMapUtil/releases/latest) from Releases
 - Import to your project
